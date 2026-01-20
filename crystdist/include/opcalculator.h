@@ -103,14 +103,21 @@ public:
                            Real const &switchWidth = 0.0,                           // grid, switching function width,
                            Real const &cutoff = 0.0,                                // distance cutoff, and whether
                            bool useLogs = false,                                    // to use the log of the OPs
-                           Real const &pValue = 0.0);                               // or a p-norm for averaging.
+                           Real const &pValue = 0.0,
+                           Real const &TanhModifier = 1.0,
+                           bool const useNorm = false);                               // or a p-norm for averaging.
 
 // Interface
+  //JAKE
+  void printQuatProduct(System<PointMolecule> const &system, CrystalDistributionParameters const &parameters);
 
+  
   void calculate(System<PointMolecule> const &system,               // Calculates crystal OPs for a given system
                  CrystalDistributionParameters const &parameters,   // and a given set of statistical parameters.
                  bool const useLogs = false,                        // If useLogs = true, stores the log of the OPs.
-                 Real const &pValue = 0.0);                         // If pValue is not zero, uses p-norm.
+                 Real const &pValue = 0.0,
+                 Real const &TanhModifier = 1.0,
+                 bool const useNorm = false);                         // If pValue is not zero, uses p-norm.
   void setGrid(OrderParameterGrid const &grid);                     // Sets the order parameter grid (clears the ops)
   void setSwitchWidth(Real const &switchWidth);                     // Sets the width of the switching function
                                                                     // (clears the ops)
@@ -164,7 +171,8 @@ inline void OrderParameterCalculator::setCutoff(Real const &cutoff)
   if(cutoff < 0.0)
   {
     std::cerr << "Error in OrderParameterCalculator::setCutoff: "
-              << "cutoff must not be negative" << std::endl;
+              << "cutoff must not be negative"
+              << "glock in my rari"  << std::endl;
     return;
   }
   ops_.cutoffSq = cutoff*cutoff;

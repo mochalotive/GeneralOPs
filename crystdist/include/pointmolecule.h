@@ -99,17 +99,21 @@ public:
   Quaternion orientation;                // Absolute orientation of the point molecule
   MoleculeType type;                     // Type of point molecule (see moleculemap.h)
   std::vector<InternalDOF> internalDOFs; // Internal degrees of freedom
+  //Jake 2025
+  bool useApproxCenter; //use a chosen atom as approximated the center?
+  int approxCenter; //index of the approximate center
+
 
 // Constructors
 
   PointMolecule(MoleculeType const &type = GENERAL); // Defines an empty point molecule with an
                                                      // optionally given type
   PointMolecule(Molecule &molecule,                  // Defines a point molecule from a molecule
-                MoleculeMap const &map);             // and a molecule map
+                MoleculeMap const &map, bool useApproxCenter_ = false);             // and a molecule map
 
 // Interface
 
-  void set(Molecule &molecule, MoleculeMap const &map); // Defines a point molecule from a molecule
+  void set(Molecule &molecule, MoleculeMap const &map, bool useApproxCenter_ = false); // Defines a point molecule from a molecule
                                                         // and a molecule map
   void clear();                                         // Clears the point molecule
 
@@ -119,11 +123,12 @@ public:
                                                             // of freedom
   InternalDOF const &internalDOF(size_t const index) const; // Returns the index-th internal degree of freedom
 
+
 // Build a System<PointMolecule> from a System<Molecule> and a molecule map. Only the molecules with
 // the same residue name as the ones in the molecule map vector are converted, others are ignored.
 
   friend System<PointMolecule> const getPointMolecules(System<Molecule> &system, 
-                                                       MoleculeMap const &map);
+                                                       MoleculeMap const &map, bool useApproxCenter_);
 
 // Print point molecule information (mostly for debugging)
 
@@ -143,6 +148,8 @@ inline void PointMolecule::clear()
   orientation = 1.0;
   type = GENERAL;
   internalDOFs.clear();
+  useApproxCenter = false;
+  approxCenter = 0;
 }
 
 inline size_t const PointMolecule::numInternalDOFs() const
@@ -156,9 +163,10 @@ inline InternalDOF const &PointMolecule::internalDOF(size_t const index) const
   return internalDOFs[index];
 }
 
+
 // Prototype for getPointMolecules - otherwise gcc pukes
 System<PointMolecule> const getPointMolecules(System<Molecule> &system, 
-                                              MoleculeMap const &map);
+                                              MoleculeMap const &map, bool useApproxCenter_=false);
 
 #endif
 

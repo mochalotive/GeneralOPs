@@ -413,6 +413,7 @@ int main(int argc, char* argv[])
       return -1;
     }
     currentMolecule.setTemperatureFactor((*opsPtr)[opIndex]);
+    std::cout<< (*opsPtr)[opIndex] << " " << i << std::endl;
   }
   PDBFile outputFile(outFileName, OUT);
   outputFile << mySystem;

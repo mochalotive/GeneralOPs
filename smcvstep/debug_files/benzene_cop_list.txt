@@ -1,0 +1,5 @@
+/somedir/copfile1.cop
+/somedir/copfile2.cop
+/somedir/copfile3.cop
+/somedir/copfile4.cop
+

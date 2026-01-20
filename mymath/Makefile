@@ -6,8 +6,9 @@ COMMON_ROOT_PATH = "$(MYMATH_PATH)/../"
 RANDOMC_ROOT_PATH = "$(MYMATH_PATH)/../"
 MYMATH_ROOT_PATH = "$(MYMATH_PATH)/../"
 
-CC = g++ -m32
-CFLAGS = -c -Wall -I$(COMMON_ROOT_PATH) -I$(MYMATH_ROOT_PATH) \
+#CC = g++ -m32
+CC = g++ -m64
+CFLAGS = -c -g -Wall -I$(COMMON_ROOT_PATH) -I$(MYMATH_ROOT_PATH) \
                   -I$(RANDOMC_ROOT_PATH)
 
 all:

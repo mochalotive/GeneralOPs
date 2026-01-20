@@ -215,6 +215,7 @@ void GlobalHistogram::addSystem(System<PointMolecule> const &system, std::string
 
     for(size_t j = i + 1; j < system.size(); j++) // Loop over neighbors
     {
+
       if(system[j].name.find(name) == system[j].name.npos)
         continue; // Skip if not the named molecule
       if(norm2(system.lattice().difference(system[i].position, system[j].position)) > cutoff2) 

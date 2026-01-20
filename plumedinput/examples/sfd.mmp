@@ -1,0 +1,10 @@
+! Molecule map data
+1                 ! Number of entries
+! Sulfadiazine
+SFD               ! Residue name
+GENERAL           ! Residue type
+12 18 16             ! Atoms defining the internal frame
+0                 ! Number of internal degrees of freedom
+!DIHEDRAL           Type of DOF (DISTANCE, ANGLE, DIHEDRAL)
+!0 4 7 9            Atoms defining the internal DOF
+!2                  Symmetry number

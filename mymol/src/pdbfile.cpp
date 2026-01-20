@@ -201,12 +201,12 @@ PDBFile &operator>>(PDBFile &pdbFile, Geometry &geometry)
       std::cerr << "Error reading ATOM/HETATM record from file " << pdbFile.fileName() << std::endl;
       return pdbFile;
     }
-    if(r_serial != iAtom + 1)
-    {
-      std::cerr << "Error reading pdb file " << pdbFile.fileName()
-                << ": atom serial numbers not correlated" << std::endl;
-      return pdbFile;
-    }
+//    if(r_serial != iAtom + 1)
+//    {
+//      std::cerr << "Error reading pdb file " << pdbFile.fileName()
+//                << ": atom serial numbers not correlated" << std::endl;
+//      return pdbFile;
+//    }
     r_roleName = line.substr(12, 4);
     // Find the atomic symbol
     size_t symbolIndex = r_roleName.find_first_not_of(" 1234567890");
@@ -557,12 +557,12 @@ PDBFile &operator>>(PDBFile &pdbFile, System<Geometry> &system)
       std::cerr << "Error reading ATOM/HETATM record from file " << pdbFile.fileName() << std::endl;
       return pdbFile;
     }
-    if(r_serial != iAtom + 1)
-    {
-      std::cerr << "Error reading pdb file " << pdbFile.fileName()
-                << ": atom serial numbers not correlated" << std::endl;
-      return pdbFile;
-    }
+//    if(r_serial != iAtom + 1)
+//    {
+//      std::cerr << "Error reading pdb file " << pdbFile.fileName()
+//                << ": atom serial numbers not correlated" << std::endl;
+//      return pdbFile;
+//    }
     r_roleName = line.substr(12, 4);
     // Find the atomic symbol
     size_t symbolIndex = r_roleName.find_first_not_of(" 12345667890");
@@ -980,12 +980,12 @@ PDBFile &operator>>(PDBFile &pdbFile, System<Molecule> &system)
       std::cerr << "Error reading ATOM/HETATM record from file " << pdbFile.fileName() << std::endl;
       return pdbFile;
     }
-    if(r_serial != iAtom + 1)
-    {
-      std::cerr << "Error reading pdb file " << pdbFile.fileName()
-                << ": atom serial numbers not correlated" << std::endl;
-      return pdbFile;
-    }
+//    if(r_serial != iAtom + 1)
+//    {
+//      std::cerr << "Error reading pdb file " << pdbFile.fileName()
+//                << ": atom serial numbers not correlated" << std::endl;
+//      return pdbFile;
+//    }
     r_roleName = line.substr(12, 4);
     // Find the atomic symbol
     size_t symbolIndex = r_roleName.find_first_not_of(" 1234567890");

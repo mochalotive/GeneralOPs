@@ -302,7 +302,7 @@ int main(int argc, char* argv[])
 
     // Convert to point molecules
     myPointMolecules.clear();
-    myPointMolecules = getPointMolecules(mySystem, myMoleculeMaps[0]);
+    myPointMolecules = getPointMolecules(mySystem, myMoleculeMaps[0],true);
    
     // Accumulate statistics
     myStatistics.addPoint(myPointMolecules, myPeakTable); 

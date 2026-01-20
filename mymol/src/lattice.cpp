@@ -245,6 +245,7 @@ Real const Lattice::volume() const
 
 bool const Lattice::isPeriodic() const
 {
+  if (fakeNOPBC) return false;
   return (latticeVectors_.size() > 0)?true:false;
 }
 

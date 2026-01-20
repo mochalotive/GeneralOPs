@@ -15,7 +15,7 @@ MYMOL_ROOT_PATH = "$(COP2PDB_PATH)/../"
 # This should point to the directory containing the "crystdist" folder:
 CRYSTDIST_ROOT_PATH = "$(COP2PDB_PATH)/../"
 
-CC = g++ -m32
+CC = g++ -m64
 CFLAGS = -c -Wall -I$(COMMON_ROOT_PATH) -I$(MYMATH_ROOT_PATH) \
                   -I$(MYMOL_ROOT_PATH) -I$(CRYSTDIST_ROOT_PATH) 
 

@@ -54,7 +54,8 @@ public:
   void setName(std::string const &name);        // Sets the name
   void clear();                                 // Clears the name and the objects in the system
   void reset();                                 // Clears the name, the objects, and the unit cell
-
+  void wipeLattice();
+  void setfakeNOPBC();
 // Access by element
 
   Type &operator[](size_t const i);             // Can modify
@@ -72,10 +73,12 @@ public:
   void join(size_t const i); // Joins atoms from i-th object if they've been separated by wrapping
   void joinAll();            // Joins atoms from all objects if they've been separated by wrapping
 
-private:
 
+
+private:
   std::vector<Type> system_;  // The objects in the system
-  Lattice lattice_;           // The unit cell
+   Lattice lattice_;
+          // The unit cell
   std::string name_;          // Name of the system
 };
 
@@ -128,6 +131,17 @@ inline void System<Type>::reset()
   name_.clear();
   system_.clear();
   lattice_.clear();
+}
+
+template<typename Type>
+inline void System<Type>::wipeLattice()
+{
+  lattice_.clear(CRYSTAL);
+}
+template<typename Type>
+inline void System<Type>::setfakeNOPBC()
+{
+  lattice_.fakeNOPBC=true;
 }
 
 template<typename Type>

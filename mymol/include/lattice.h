@@ -47,7 +47,7 @@ class Lattice
 public:
 
 // Constructors
-
+  bool fakeNOPBC = false;
   Lattice(LatticeType const &latticeType = SUPERCELL);  // Define a non-periodic lattice. Optionally, set
                                                         // the lattice type
   Lattice(Vector3D const &a,                            // Define a 1D periodic lattice by giving the lattice

@@ -81,6 +81,7 @@ struct HistogramSettings
   size_t numInternalDihedralBins; // Number of bins for dihedral internal DOFs
   Real cutoff;                    // Cutoff for intermolecular distances
   Real internalCutoff;            // Cutoff for internal distance DOFs
+  size_t useApproxCenter;
 
   HistogramSettings() // Assign default values
   :
@@ -92,7 +93,8 @@ struct HistogramSettings
   numInternalAngleBins(DEFAULT_NUM_AXIS_BINS),
   numInternalDihedralBins(DEFAULT_NUM_ANGLE_BINS),
   cutoff(DEFAULT_DISTANCE_CUTOFF),
-  internalCutoff(DEFAULT_DISTANCE_CUTOFF)
+  internalCutoff(DEFAULT_DISTANCE_CUTOFF),
+  useApproxCenter(0)
   {}
 
   void reset()  // Assigns default values
@@ -106,6 +108,7 @@ struct HistogramSettings
     numInternalDihedralBins = DEFAULT_NUM_ANGLE_BINS;
     cutoff = DEFAULT_DISTANCE_CUTOFF;
     internalCutoff = DEFAULT_DISTANCE_CUTOFF;
+    useApproxCenter = 0;
   }
 
   // Input
@@ -120,6 +123,8 @@ struct HistogramSettings
     inStream >> settings.numInternalDihedralBins; inStream.ignore(LINE_LENGTH, '\n'); 
     inStream >> settings.cutoff; inStream.ignore(LINE_LENGTH, '\n'); 
     inStream >> settings.internalCutoff; inStream.ignore(LINE_LENGTH, '\n'); 
+    inStream >> settings.useApproxCenter; inStream.ignore(LINE_LENGTH, '\n'); 
+
     if( (!inStream && !inStream.eof()) ||
         (settings.cutoff < 0.0) ||
         (settings.internalCutoff < 0.0) )
@@ -142,6 +147,8 @@ struct HistogramSettings
     outStream << settings.numInternalDihedralBins << " ! Number of bins for dihedral DOFs" << std::endl;
     outStream << settings.cutoff << " ! Distance cutoff" << std::endl;
     outStream << settings.internalCutoff << " ! Internal DOF cutoff" << std::endl;
+    outStream << settings.useApproxCenter << " ! Use first frame point as center? 0/1" << std::endl;
+
     return outStream;
   }
 };

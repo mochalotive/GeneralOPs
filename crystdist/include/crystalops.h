@@ -174,23 +174,26 @@ struct CrystalOrderParameters
       return bondOrientation[i - distance.size()];
     else if(i < distance.size() + bondOrientation.size() + relativeOrientation.size())
       return relativeOrientation[i - distance.size() - bondOrientation.size()];
-    else if(i < distance.size() + bondOrientation.size() + relativeOrientation.size() +
-                internal.size()*internal[0].size())
+////    
+ else if(i < distance.size() + bondOrientation.size() + relativeOrientation.size() +
+               localDensity.size())
+      return localDensity[i - distance.size() - bondOrientation.size() - relativeOrientation.size()];
+
+
+
+    else if(i < distance.size() + bondOrientation.size() + relativeOrientation.size() + localDensity.size() +  internal.size()*internal[0].size()
+               )
     {
-      size_t iM = i - distance.size() - bondOrientation.size() - relativeOrientation.size();
+      size_t iM = i - distance.size() - bondOrientation.size() - relativeOrientation.size() - localDensity.size();
       size_t nInt = internal[0].size();
       if(iM/nInt >= internal.size())
       {
         std::cerr << "Index out of bounds in CrystalOrderParameters::operator[]" << std::endl;
         return distance[0];
-      }
+      }//////
       else return internal[iM/nInt][iM%nInt];
     }
-    else if(i < distance.size() + bondOrientation.size() + relativeOrientation.size() +
-                internal.size()*internal[0].size() + localDensity.size())
-      return localDensity[i - distance.size() - bondOrientation.size() - relativeOrientation.size() -
-                          internal.size()*internal[0].size()];
-    else if(i < distance.size() + bondOrientation.size() + relativeOrientation.size() +
+       else if(i < distance.size() + bondOrientation.size() + relativeOrientation.size() +
                 internal.size()*internal[0].size() + localDensity.size() + total.size())
       return total[i - distance.size() - bondOrientation.size() - relativeOrientation.size() -
                    internal.size()*internal[0].size() - localDensity.size()];

@@ -1,0 +1,6 @@
+export PATH="/rs1/researchers/e/eesantis/jpmckibb/htt-multicolvar/plumed2/src/lib/:$PATH"
+export LIBRARY_PATH="/rs1/researchers/e/eesantis/jpmckibb/htt-multicolvar/plumed2/src/lib/:$LIBRARY_PATH"
+export LD_LIBRARY_PATH="/rs1/researchers/e/eesantis/jpmckibb/htt-multicolvar/plumed2/src/lib/:$LD_LIBRARY_PATH"
+export PLUMED_KERNEL="/rs1/researchers/e/eesantis/jpmckibb/htt-multicolvar/plumed2/src/lib/libplumedKernel.so"
+export PLUMED_VIMPATH="/rs1/researchers/e/eesantis/jpmckibb/htt-multicolvar/plumed2/vim"
+export PYTHONPATH="/rs1/researchers/e/eesantis/jpmckibb/htt-multicolvar/plumed2/python:$PYTHONPATH"

@@ -57,7 +57,6 @@ size_t const findBracket(TypeData const &data, Real const &value)
 // Template types follow the same convention as findBracket, but:
 // TypeData must also allow basic vector arithmetic (addition,
 // subtraction, multiplication by scalar).
-
 template<typename TypeData>
 TypeData const evaluateBSpline(std::vector<Real> const &parameter, 
                                std::vector<TypeData> const &point,
@@ -90,6 +89,100 @@ TypeData const evaluateBSpline(std::vector<Real> const &parameter,
     result += (2.0*point[numPoints - 1] - point[numPoints - 2])*bFunction;
   return result;
 }
+
+
+template<typename TypeData>
+TypeData const evaluateBSplineDerivative(std::vector<Real> const &parameter, 
+                               std::vector<TypeData> const &point,
+                               Real const &value)
+{
+  //unchanged, find interval of value, this is unchanged
+  assert(parameter.size() == point.size());
+  assert(parameter.size() > 1);
+  size_t numPoints = point.size();
+  size_t left = 
+    findBracket<std::vector<Real> >(parameter, value);
+  size_t right = left + 1;
+   
+
+  //derivative of result with respect to value
+  Real scaled = (value - parameter[left - 1])/
+                       (parameter[right - 1] - parameter[left - 1]);
+  Real dscaled = 1.0 / (parameter[right - 1] - parameter[left - 1]);
+
+  TypeData result;
+  TypeData dresult;
+  Real bFunction; // Basis function
+  Real dbFunction;
+  bFunction = (((-scaled + 3.0)*scaled - 3.0)*scaled + 1.0)/6.0;
+  dbFunction = (-3.0*scaled*scaled*dscaled + 6.0*scaled*dscaled - 3.0*dscaled)/6.0;
+  if(left > 1)
+    {result = point[left - 2]*bFunction;
+    dresult = point[left - 2]*dbFunction;}
+  else
+  {  result = (2.0*point[0] - point[1])*bFunction;
+    dresult =  (2.0*point[0] - point[1])*dbFunction;}
+  bFunction = ((3.0*scaled - 6.0)*scaled*scaled + 4.0)/6.0;
+  dbFunction = (9.0*scaled*scaled*dscaled - 12.0*scaled*dscaled)/6.0;
+    result += point[left - 1]*bFunction;
+    dresult += point[left - 1]*dbFunction;
+  bFunction = (((-3.0*scaled + 3.0)*scaled + 3.0)*scaled + 1.0)/6.0;
+  dbFunction = (-9.0*scaled*scaled*dscaled + 6.0*scaled*dscaled + 3.0*dscaled)/6.0;
+    result += point[right - 1]*bFunction;
+    dresult += point[right - 1]*dbFunction;
+  bFunction = scaled*scaled*scaled/6.0;
+  dbFunction = 3.0*scaled*scaled*dscaled/6.0;
+  if(right < numPoints)
+   { result += point[right]*bFunction;
+    dresult += point[right]*dbFunction;}
+  else
+    {result += (2.0*point[numPoints - 1] - point[numPoints - 2])*bFunction;
+    dresult += (2.0*point[numPoints - 1] - point[numPoints - 2])*dbFunction;}
+
+//#define BSPLINE_CENTRAL_DIFF
+#ifdef BSPLINE_CENTRAL_DIFF
+TypeData valueForward = evaluateBSpline<TypeData>(parameter, 
+                                                 point,
+                                                 value+0.01);
+TypeData finiteDiff = result;
+//f(x-h) - 2f(x) +f(f+h)/h
+for (size_t i=0; i<finiteDiff.size(); i++)
+{
+finiteDiff[i]-=valueForward[i];
+finiteDiff[i] /=(-0.01);
+//CentralDiff[i]*=-1;
+}
+for (size_t i=0; i<finiteDiff.size(); i++)
+  {
+  std::cerr << finiteDiff[i] << " " << dresult[i] << std::endl;
+  }
+
+#endif
+
+  return dresult;
+}
+//JAKE
+//JAKE - linear spline derivative june 2024
+template<typename TypeData>
+TypeData const evaluateLinearSplineDerivative(std::vector<Real> const &parameter, 
+                                    std::vector<TypeData> const &point,
+                                    Real const &value)
+{
+  assert(parameter.size() == point.size());
+  assert(parameter.size() > 1);
+  size_t left = 
+    findBracket<std::vector<Real> >(parameter, value);
+  size_t right = left + 1;
+  
+  Real scaled = (value - parameter[left - 1])/
+                (parameter[right - 1] - parameter[left - 1]);
+  Real dscaled = 1/(parameter[right - 1] - parameter[left - 1]);
+  TypeData result = point[left - 1] + 
+                    scaled*(point[right - 1] - point[left - 1]);
+  TypeData dresult = dscaled*(point[right - 1] - point[left - 1]); 
+  return dresult;
+}
+
 
 // Piecewise linear interpolation for a given trajectory.
 // Template types follow the same convention as evaluateBSpline. 

@@ -1,0 +1,53 @@
+
+# Note: Make mymol and crystdist before making copcalc
+
+PLUMEDINPUT_PATH = `pwd`
+# This should point to the directory containing the mymol library (mymol.a):
+MYMOL_LIB_PATH = ../mymol/lib
+# This should point to the directory containing the crystdist library (crystdist.a):
+CRYSTDIST_LIB_PATH = ../crystdist/lib
+# This should point to the directory containing the "parser" folder:
+PARSER_LIB_PATH = ../parser/lib
+# This should point to the directory containing the "common" folder:
+COMMON_ROOT_PATH = "$(PLUMEDINPUT_PATH)/../"
+# This should point to the directory containing the "mymath" folder:
+MYMATH_ROOT_PATH = "$(PLUMEDINPUT_PATH)/../"
+# This should point to the directory containing the "mymol" folder:
+MYMOL_ROOT_PATH = "$(PLUMEDINPUT_PATH)/../"
+# This should point to the directory containing the "crystdist" folder:
+CRYSTDIST_ROOT_PATH = "$(PLUMEDINPUT_PATH)/../"
+PARSER_ROOT_PATH = "$(PLUMEDINPUT_PATH)/../"
+# This should point to the dir
+
+
+CC = g++ -m64
+CFLAGS = -c -g -I$(COMMON_ROOT_PATH) -I$(MYMATH_ROOT_PATH) \
+                  -I$(MYMOL_ROOT_PATH) -I$(CRYSTDIST_ROOT_PATH) \
+                   -I$(PARSER_ROOT_PATH)
+all: bin/makeplumed
+
+bin/makeplumed: src/makeplumed.o src/plumedfile.o src/plumedparameters.o src/kernelfile.o src/equationfile.o src/fileconverters.o$(MYMOL_LIB_PATH)/mymol.a $(CRYSTDIST_LIB_PATH)/crystdist.a $(PARSER_LIB_PATH)/parser.a
+	mkdir -p bin
+	$(CC)   src/makeplumed.o  src/plumedfile.o src/plumedparameters.o src/kernelfile.o src/equationfile.o src/fileconverters.o   $(PARSER_LIB_PATH)/parser.a $(CRYSTDIST_LIB_PATH)/crystdist.a $(MYMOL_LIB_PATH)/mymol.a -o bin/makeplumed
+
+
+src/kernelfile.o: src/kernelfile.cpp
+	$(CC) $(CFLAGS) src/kernelfile.cpp -o src/kernelfile.o
+
+src/kernelfile.o: src/equationfile.cpp
+	$(CC) $(CFLAGS) src/equationfile.cpp -o src/equationfile.o
+
+src/makeplumed.o: src/makeplumed.cpp
+	$(CC) $(CFLAGS) src/makeplumed.cpp -o src/makeplumed.o
+
+src/fileconverters.o: src/fileconverters.cpp
+	$(CC) $(CFLAGS) src/fileconverters.cpp -o src/fileconverters.o
+
+src/plumedfile.o: src/plumedfile.cpp
+	$(CC) $(CFLAGS) src/plumedfile.cpp -o src/plumedfile.o
+
+#src/plumedparameters.o: src/plumedparameters.cpp
+#	$(CC) $(CFLAGS) src/plumedparameters.cpp -o src/plumedparameters.o
+
+clean:
+	rm -rf src/*.o bin

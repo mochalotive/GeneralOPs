@@ -242,8 +242,9 @@ int main(int argc, char* argv[])
   
     // Convert to System<PointMolecule>
     mySystem.setLatticeType(CRYSTAL); // To get PBC's right
-    System<PointMolecule> myPointMolecules = getPointMolecules(mySystem, myMoleculeMaps[0]);
-
+    bool useApprox = false;
+if (mySettings.histogramSettings.useApproxCenter==1) useApprox = true;
+    System<PointMolecule> myPointMolecules = getPointMolecules(mySystem, myMoleculeMaps[0],useApprox );
     // Add to ptm file to use later
     myPTMFile << myPointMolecules;
 

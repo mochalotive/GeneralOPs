@@ -328,7 +328,8 @@ COPFile &operator>>(COPFile &copFile, CrystalOrderParameters &parameters)
 
   // If present, read total order parameters
   std::getline(copFile, r_label);
-  if(r_label.find("!TOTAL_OPs:") == r_label.npos)
+
+  if(r_label.find("!TOTAL_OPS:") == r_label.npos)
     return copFile; // Old version of cop file - no total OPs
   parameters.total.reserve(r_nCells);
   for(size_t i = 0; i < r_nCells; ++i)

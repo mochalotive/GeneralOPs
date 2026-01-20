@@ -43,15 +43,12 @@
 void printHelpMessage()
 {
   std::cout << std::endl
-            << "copcalc - Calculate crystal order parameters for a given geometry." << std::endl << std::endl;
+            << "quat -prints out quaternion products per molecule of the ststem." << std::endl << std::endl;
   std::cout << "Usage: copcalc [-help] " << std::endl
             << "               [-pdb pdb_filename] " << std::endl
             << "               [-mmp mmp_filename] " << std::endl
             << "               [-xtp xtp_filename] " << std::endl
-            << "               [-numcells nx {ny nz}] " << std::endl
             << "               [-origin ox oy oz] " << std::endl
-            << "               [-cutoff cutoff] " << std::endl
-            << "               [-sfw width]" << std::endl
             << "               [-cop cop_filename] " << std::endl << std::endl
             << "Description: copcalc can be used to compute crystal order parameters" << std::endl
             << "             for a given geometry using a molecule map, a file" << std::endl
@@ -72,10 +69,14 @@ void printHelpMessage()
             << "         -cutoff cutoff       - Distance cutoff" << std::endl
             << "         -cop cop_filename    - Output file containing target values of" << std::endl
             << "                                the crystal order parameters" << std::endl 
-            << "         -log                 - If given, the program writes the natural" << std::endl
-            << "                                logarithm of the OPs" << std::endl
+            << "         -log                 - If given, this uses a TANH to squash the function" << std::endl
+            << "                                log is just because I don't want to change names :^)" << std::endl
             << "         -pnorm p_value       - If given, the program uses a p-norm to" << std::endl
             << "                                calculate averages" << std::endl << std::endl
+            << "         -tanh needs to be followed by a modifiying value placed within the tanh of the OP" << std::endl
+            << "         -approx uses the first value within the mmp as a molecule center, instead of the center of mass" << std::endl
+            << "         -nopbc doesn't use pbc, used 1-tanh(pos) as a switch, and normalizes via per-molecule coordination, rather than" << std::endl
+            << "          the number of molecules in each cell." << std::endl 
             << "         The -pdb, -mmp and -xtp options are mandatory." << std::endl
             << "         The mmp and xtp file formats are defined in the crystdist library." << std::endl
             << "         If the -numcells option is not given, a single order parameter" << std::endl
@@ -114,12 +115,16 @@ int main(int argc, char* argv[])
   bool found_cop = false;
   bool found_log = false;
   bool found_pnorm = false;
+  bool found_norm = false;
+  bool useApprox=false;
+  bool nopbc = false;
   std::string pdbFileName, mmpFileName, xtpFileName, copFileName;
   size_t nx, ny, nz; nx = ny = nz = 1;
   Real ox, oy, oz; ox = oy = oz = 0.0;
   Real switchWidth = 0.0;
   Real cutoff = 0.0;
   Real pValue = 0.0;
+  Real TanhModifier = 0.0;
   for(size_t i = 0; i < arguments.size(); ++i)
   {
     if(arguments[i].find("-") != arguments[i].npos)
@@ -208,6 +213,10 @@ int main(int argc, char* argv[])
           }
         }
       } // End of "-numcells" option
+      else if(arguments[i] == "-norm")
+        {
+        found_norm = true;
+        }
       else if(arguments[i] == "-origin")
       {
         found_origin = true;
@@ -301,6 +310,22 @@ int main(int argc, char* argv[])
           return -1;
         }
       }
+      else if (arguments[i] =="-tanh")
+      {
+        if(i + 1 >= arguments.size() ||
+           arguments[i + 1].find("-") != arguments[i + 1].npos)
+        {
+          std::cerr << "Value of TanhModifier must be given after the -tanh option." << std::endl
+                    << "Use copcalc -help for help." << std::endl;
+          return -1;
+        }
+        std::stringstream tanhStream(arguments[i + 1]);
+        tanhStream >> TanhModifier;
+ 
+      }
+      else if (arguments[i] == "-approx") useApprox = true;
+      else if (arguments[i] == "-nopbc") nopbc = true;
+
       else
       {
         std::cerr << "Unknown option: " << arguments[i] << std::endl
@@ -363,14 +388,15 @@ int main(int argc, char* argv[])
   }
 
   // Calculate order parameters
-  mySystem.setLatticeType(CRYSTAL); // To get PBC's right
-  System<PointMolecule> myPointMolecules = getPointMolecules(mySystem, myMoleculeMaps[0]);
+    mySystem.setLatticeType(CRYSTAL); // To get PBC's right
+    if (nopbc)
+    mySystem.setfakeNOPBC();
+  System<PointMolecule> myPointMolecules = getPointMolecules(mySystem, myMoleculeMaps[0], useApprox);
   OrderParameterGrid myCOPGrid(nx, ny, nz, Vector3D(ox, oy, oz));
-  OrderParameterCalculator myCOPCalculator(myPointMolecules, myCOPParameters, myCOPGrid, switchWidth, cutoff, found_log, pValue);
-
+  OrderParameterCalculator myCOPCalculator(myPointMolecules, myCOPParameters, myCOPGrid, switchWidth, cutoff, found_log, pValue, TanhModifier, found_norm);
+  //myCOPCalculator.printQuatProduct(myPointMolecules, myCOPParameters);
   // Write order parameters to file
   COPFile myCOPFile(copFileName, OUT);
   myCOPFile << myCOPCalculator.orderParameters();
-
   return 0;
 }

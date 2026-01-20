@@ -11,22 +11,26 @@ MYMOL_ROOT_PATH = "$(CRYSTDIST_PATH)/../"
 # This should point to the directory containing the "randomc" folder:
 RANDOMC_ROOT_PATH = "$(CRYSTDIST_PATH)/../"
 CRYSTDIST_ROOT_PATH = "$(CRYSTDIST_PATH)/../"
+MYMOL_LIB_PATH = ../mymol/
 
-CC = g++ -m32
-CFLAGS = -c -Wall -I$(COMMON_ROOT_PATH) -I$(MYMATH_ROOT_PATH) -I$(MYMOL_ROOT_PATH) -I$(CRYSTDIST_ROOT_PATH) -I$(RANDOMC_ROOT_PATH)
+
+CC = g++ -m64
+#CC = g++ -m32
+CFLAGS = -c -g -Wall -I$(COMMON_ROOT_PATH) -I$(MYMATH_ROOT_PATH) -I$(MYMOL_ROOT_PATH) -I$(CRYSTDIST_ROOT_PATH) -I$(RANDOMC_ROOT_PATH)
 
 all: lib/crystdist.a
 
 lib/crystdist.a: src/copfile.o src/globalhistogram.o src/mmpfile.o src/opcalculator.o \
                  src/peakaccumulator.o src/peakstatistics.o src/peakclustering.o src/peaktable.o \
                  src/pktfile.o src/pointmolecule.o src/ptmfile.o src/relativeconfiguration.o \
-                 src/xtpfile.o 
+                 src/xtpfile.o $(MYMOL_LIB_PATH)/lib/mymol.a 
 	mkdir -p lib
 	ar cq lib/crystdist.a src/copfile.o src/globalhistogram.o src/mmpfile.o \
                               src/opcalculator.o src/peakaccumulator.o \
                               src/peakstatistics.o src/peakclustering.o \
                               src/peaktable.o src/pktfile.o src/pointmolecule.o \
-                              src/ptmfile.o src/relativeconfiguration.o src/xtpfile.o
+                              src/ptmfile.o src/relativeconfiguration.o src/xtpfile.o \
+                              $(MYMOL_LIB_PATH)/lib/mymol.a
 
 debug: lib/crystdist.a src/crystdist.o 
 	mkdir -p bin
@@ -74,6 +78,7 @@ src/relativeconfiguration.o: src/relativeconfiguration.cpp
 
 src/xtpfile.o: src/xtpfile.cpp
 	$(CC) $(CFLAGS) src/xtpfile.cpp -o src/xtpfile.o
+
 
 clean:
 	rm -rf *.x src/*o lib bin

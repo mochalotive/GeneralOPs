@@ -47,10 +47,13 @@ TypeElement const distance(TypePoint const &point1, TypePoint const &point2)
   TypeElement distanceSq = 0.0;
   for(size_t i = 0; i < numElements; ++i)
   {
+//    std::cout<< "number: " << i <<std::endl;
     TypeElement diff = point1[i] - point2[i];
-    distanceSq += diff*diff;
+//    std::cout << "sq diff: " << diff*diff <<std::endl;
+	distanceSq += diff*diff;
   }
-  return sqrt(distanceSq);
+// std::cout << "distance: " << sqrt(distanceSq) <<std::endl; 
+ return sqrt(distanceSq);
 }
 
 // Auxiliary function for the calculation of Frechet distance.

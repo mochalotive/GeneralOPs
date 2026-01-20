@@ -2,8 +2,9 @@
 RANDOMC_PATH = `pwd`
 RANDOMC_ROOT_PATH = "$(RANDOMC_PATH)/../"
 
-CC = g++ -m32
-CFLAGS = -c -Wall -I$(RANDOMC_ROOT_PATH)
+CC = g++ -m64
+#CC = g++ -m32
+CFLAGS = -c -g -Wall -I$(RANDOMC_ROOT_PATH)
 
 all: lib/randomc.a
 

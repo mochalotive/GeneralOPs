@@ -67,14 +67,14 @@ public:
 
 // Accessors
 
-  size_t const numFramesRead() const; // Returns the number of frames that have been already read
-  size_t const numFrames() const;     // Returns the number of frames stored in the dcd file
+  int const numFramesRead() const; // Returns the number of frames that have been already read
+  int const numFrames() const;     // Returns the number of frames stored in the dcd file
 
 // Interface
 
    void setFile(std::string const &fileName); // Sets the file name
    void skipFrame();                          // Skips one frame
-   void skipFrames(size_t const numFrames);   // Skip numFrames frames
+   void skipFrames(int const numFrames);   // Skip numFrames frames
    void skipToLastFrame();                    // Skips to the last frame
    void clear();                              // Closes the file and clears file data
 
@@ -92,9 +92,9 @@ public:
 
 private:
 
-  size_t numAtoms_;       // Number of atoms read from the dcd file header
-  size_t numFramesRead_;  // Number of frames that have been read from the dcd file
-  size_t numFrames_;      // Number of frames in the dcd file
+  int numAtoms_;       // Number of atoms read from the dcd file header
+  int numFramesRead_;  // Number of frames that have been read from the dcd file
+  int numFrames_;      // Number of frames in the dcd file
 
 // Private functions
 
@@ -111,12 +111,12 @@ private:
 
 // Inlines
 
-inline size_t const DCDFile::numFrames() const
+inline int const DCDFile::numFrames() const
 {
   return numFrames_;
 }
 
-inline size_t const DCDFile::numFramesRead() const
+inline int const DCDFile::numFramesRead() const
 {
   return numFramesRead_;
 }
@@ -128,9 +128,9 @@ inline void DCDFile::setFile(std::string const &fileName)
   initializeDCDFile();
 }
 
-inline void DCDFile::skipFrames(size_t const numFrames)
+inline void DCDFile::skipFrames(int const numFrames)
 {
-  for(size_t i = 0; i < numFrames; ++i)
+  for(int i = 0; i < numFrames; ++i)
     skipFrame();
 }
 

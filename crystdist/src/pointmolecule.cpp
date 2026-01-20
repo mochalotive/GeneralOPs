@@ -25,17 +25,17 @@
 
 PointMolecule::PointMolecule(MoleculeType const &type)
 : 
-name(), position(0.0), orientation(1.0), type(type), internalDOFs()
+name(), position(0.0), orientation(1.0), type(type), internalDOFs(), useApproxCenter(false), approxCenter(0)
 {}
 
-PointMolecule::PointMolecule(Molecule &molecule, MoleculeMap const &map)
+PointMolecule::PointMolecule(Molecule &molecule, MoleculeMap const &map, bool useApproxCenter_)
 :
-name(), position(0.0), orientation(1.0), type(GENERAL), internalDOFs()
-{ set(molecule, map); }
+name(), position(0.0), orientation(1.0), type(GENERAL), internalDOFs(), approxCenter(0)
+{ set(molecule, map, useApproxCenter_); }
 
 // Interface
 
-void PointMolecule::set(Molecule &molecule, MoleculeMap const &map)
+void PointMolecule::set(Molecule &molecule, MoleculeMap const &map, bool useApproxCenter_)
 {
   if(molecule.name().find(map.name) == molecule.name().npos)
     std::cerr << "Warning from PointMolecule::setPointMolecule: " << std::endl
@@ -43,7 +43,7 @@ void PointMolecule::set(Molecule &molecule, MoleculeMap const &map)
 
   // Name
   name = molecule.name();
-
+  
   // Remove trailing space (e.g. from pdb residue name)
   size_t indx = name.find_last_not_of(" \n") + 1;
   size_t len = name.size() - indx;
@@ -51,10 +51,18 @@ void PointMolecule::set(Molecule &molecule, MoleculeMap const &map)
 
   // Type
   type = map.type;
-
+  
+  useApproxCenter = useApproxCenter_; 
   // Position
+  if (useApproxCenter) {
+  position = molecule.atom(map.framePoints[0].atoms[0]).position;//assuming only one atom per frame point??
+//  std::cout << position << std::endl;
+  }
+  else
+{
   position = molecule.centerOfMass();
-
+//  std::cout << position << std::endl;
+}
   // Orientation
   Vector3D origin = 0.0, xpoint = 0.0, ypoint = 0.0;
   switch(map.type)
@@ -103,6 +111,8 @@ void PointMolecule::set(Molecule &molecule, MoleculeMap const &map)
       for(size_t i = 0; i < map.framePoints[2].numAtoms(); ++i)
         ypoint += map.framePoints[2].weights[i]*
                   molecule.atom(map.framePoints[2].atoms[i]).position;
+    
+    //  std::cout << map.framePoints[0].numAtoms() << "\n" << std::endl;
       Vector3D vx;
       vx = xpoint - origin;
       vx.normalize();
@@ -111,6 +121,13 @@ void PointMolecule::set(Molecule &molecule, MoleculeMap const &map)
       vy.normalize();
       Vector3D vz = cross(vx, vy);
       orientation = Quaternion(Matrix3D(vx, vy, vz));
+//JAKE
+  //    std::cout << vx.x << " " << vx.y << " " << vx.z << std::endl;
+  //    std::cout << vy.x << " " << vy.y << " " << vy.z << std::endl;
+  //    std::cout << vz.x << " " << vz.y << " " << vz.z << std::endl;
+  //    std::cout << orientation.w << " " << orientation.x << " " <<  orientation.y << " " << orientation.z << std::endl;
+      //JAKE
+//
     }
     break;
   }
@@ -151,14 +168,14 @@ void PointMolecule::set(Molecule &molecule, MoleculeMap const &map)
 
 // Build a System<PointMolecule> from a System<Molecule> and a molecule map
 
-System<PointMolecule> const getPointMolecules(System<Molecule> &system, MoleculeMap const &map)
+System<PointMolecule> const getPointMolecules(System<Molecule> &system, MoleculeMap const &map, bool useApproxCenter_)
 {
   System<PointMolecule> mySystem;
   mySystem.setName(map.name + ":" + system.name());
   mySystem.setLattice(system.lattice());
   for(size_t i = 0; i < system.size(); i++)
     if(system[i].name().find(map.name) != system[i].name().npos)
-      mySystem.add(PointMolecule(system[i], map));
+      mySystem.add(PointMolecule(system[i], map, useApproxCenter_));
   return mySystem;
 }
 
